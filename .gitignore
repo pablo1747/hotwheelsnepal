@@ -1,0 +1,27 @@
+# ── Maven build output ────────────────────────────────────────────────────────
+target/
+
+# ── Eclipse IDE ───────────────────────────────────────────────────────────────
+.classpath
+.project
+.settings/
+bin/
+
+# ── macOS ─────────────────────────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+
+# ── Java compiled classes ─────────────────────────────────────────────────────
+*.class
+
+# ── Secrets / environment ─────────────────────────────────────────────────────
+*.env
+.env
+*.properties.local
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+
+# ── Uploaded user/product images (runtime generated) ─────────────────────────
+src/main/webapp/images/users/
+src/main/webapp/images/products/

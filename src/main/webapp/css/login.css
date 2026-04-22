@@ -199,3 +199,6 @@ header nav a:hover {
 }
 
 .signup-link a:hover { text-decoration: underline; }
+
+/* Input focus ring for accessibility */
+.form-input:focus { outline: 2px solid #e02020; outline-offset: 2px; }

@@ -1,0 +1,318 @@
+
+:root {
+    --red:    #e8001a;
+    --bg:     #0a0a0a;
+    --card:   #111111;
+    --border: #2a0000;
+    --text:   #ffffff;
+    --muted:  #888888;
+    --dim:    #555555;
+    --green:  #00c850;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* ===== HEADER ===== */
+header {
+    background: rgba(10,10,10,0.97);
+    border-bottom: 2px solid var(--red);
+    padding: 0 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+header h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+header nav a {
+    color: #bbb;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+header nav a:hover {
+    color: #fff;
+    background: rgba(232,0,26,0.15);
+}
+
+/* ===== THANK YOU SECTION ===== */
+.ty-section {
+    padding: 4rem 5%;
+    display: flex;
+    justify-content: center;
+    min-height: calc(100vh - 70px - 80px);
+    align-items: flex-start;
+    padding-top: 3rem;
+}
+
+.ty-card {
+    background: var(--card);
+    border: 1px solid #1e1e1e;
+    border-radius: 18px;
+    padding: 2.5rem 2rem;
+    max-width: 640px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.ty-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--red), #ff6666, var(--red));
+}
+
+/* ===== SUCCESS ICON ===== */
+.ty-icon {
+    width: 72px; height: 72px;
+    background: rgba(0,200,80,0.12);
+    border: 2px solid var(--green);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    color: var(--green);
+    margin: 0 auto 1.5rem;
+    animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes pop {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+/* ===== HEADINGS ===== */
+.ty-heading {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.ty-sub {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.8rem;
+}
+
+/* ===== ORDER REF ===== */
+.order-ref {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    background: #0f0f0f;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.ref-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+    font-weight: 700;
+}
+
+.ref-value {
+    font-family: monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 1px;
+}
+
+/* ===== PAYMENT BADGE ===== */
+.payment-badge {
+    display: inline-block;
+    background: rgba(232,0,26,0.08);
+    border: 1px solid rgba(232,0,26,0.2);
+    color: #ccc;
+    font-size: 0.82rem;
+    padding: 0.35rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+}
+
+/* ===== ORDER ITEMS ===== */
+.order-items {
+    background: #0d0d0d;
+    border: 1px solid #1e1e1e;
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.items-heading {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+    margin-bottom: 0.9rem;
+}
+
+.order-item-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #1a1a1a;
+    font-size: 0.85rem;
+}
+
+.order-item-row:last-child { border-bottom: none; }
+
+.oi-name  { flex: 1; color: #ccc; }
+.oi-qty   { color: var(--dim); font-size: 0.78rem; }
+.oi-price { font-weight: 600; color: var(--red); white-space: nowrap; }
+
+/* ===== ORDER SUMMARY ===== */
+.order-summary {
+    background: #0d0d0d;
+    border: 1px solid #1e1e1e;
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.os-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding: 0.4rem 0;
+}
+
+.os-row span:last-child { font-weight: 600; color: #ddd; }
+
+.os-divider {
+    height: 1px;
+    background: #1e1e1e;
+    margin: 0.6rem 0;
+}
+
+.os-total {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.total-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.4rem;
+    color: var(--red) !important;
+}
+
+.free-tag {
+    background: rgba(0,200,80,0.12);
+    color: #00c850;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+}
+
+/* ===== DELIVERY NOTE ===== */
+.delivery-note {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    padding: 0.9rem;
+    background: rgba(232,0,26,0.04);
+    border: 1px solid rgba(232,0,26,0.12);
+    border-radius: 8px;
+}
+
+/* ===== ACTIONS ===== */
+.ty-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-shop {
+    display: inline-block;
+    padding: 0.75rem 1.8rem;
+    background: var(--red);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    transition: all 0.25s;
+    box-shadow: 0 4px 16px rgba(232,0,26,0.3);
+}
+
+.btn-shop:hover {
+    background: #ff2233;
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+.btn-home {
+    display: inline-block;
+    padding: 0.75rem 1.8rem;
+    background: transparent;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    transition: all 0.25s;
+}
+
+.btn-home:hover {
+    border-color: #555;
+    color: #fff;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: #080808;
+    border-top: 1px solid #1a0000;
+    text-align: center;
+    padding: 2rem;
+    color: var(--dim);
+    font-size: 0.85rem;
+    margin-top: 3rem;
+}

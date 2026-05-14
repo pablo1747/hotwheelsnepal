@@ -1,0 +1,231 @@
+
+:root {
+    --red:    #e8001a;
+    --bg:     #0a0a0a;
+    --card:   #111111;
+    --border: #2a0000;
+    --text:   #ffffff;
+    --muted:  #888888;
+    --dim:    #555555;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; overflow-wrap: break-word; word-break: break-word; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* ===== HEADER ===== */
+header {
+    background: rgba(10,10,10,0.97);
+    border-bottom: 2px solid var(--red);
+    padding: 0 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+header h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+header nav a {
+    color: #bbb;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+header nav a:hover {
+    color: #fff;
+    background: rgba(232,0,26,0.15);
+}
+
+/* ===== HERO ===== */
+.about-hero {
+    background:
+        radial-gradient(ellipse at 30% 50%, rgba(232,0,26,0.14) 0%, transparent 60%),
+        linear-gradient(160deg, #100000, var(--bg));
+    text-align: center;
+    padding: 5rem 5.5%;
+    border-bottom: 1px solid #1a0000;
+}
+
+.about-hero h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+    margin-bottom: 0.7rem;
+}
+
+.about-hero p {
+    font-size: 1.1rem;
+    color: var(--muted);
+}
+
+/* ===== SECTION ===== */
+.section {
+    padding: 4rem 5%;
+    text-align: center;
+}
+
+.about-content {
+    max-width: 820px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.about-content h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 2.5rem;
+    margin-bottom: 0.7rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--red);
+}
+
+.about-content h2:first-child { margin-top: 0; }
+
+.about-content p {
+    font-size: 0.97rem;
+    line-height: 1.8;
+    color: #aaa;
+    margin-bottom: 1rem;
+}
+
+.about-content ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+.about-content ul li {
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    color: #aaa;
+    font-size: 0.95rem;
+    position: relative;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.about-content ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--red);
+    font-size: 0.85rem;
+}
+
+.about-content ul li:last-child { border-bottom: none; }
+
+/* ===== OWNERS ===== */
+.owners {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.owner-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.8rem 1.5rem;
+    width: 200px;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+}
+
+.owner-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--red);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+}
+
+.owner-card:hover {
+    border-color: var(--red);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(232,0,26,0.2);
+}
+
+.owner-card:hover::before { transform: scaleX(1); }
+
+.owner-avatar {
+    width: 58px;
+    height: 58px;
+    background: linear-gradient(135deg, #9e0012, var(--red));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+    color: #fff;
+}
+
+.owner-card h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.owner-card h3 a {
+    text-decoration: none;
+    color: #fff;
+    transition: color 0.2s;
+}
+
+.owner-card h3 a:hover { color: var(--red); }
+
+.owner-card p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: #080808;
+    border-top: 1px solid #1a0000;
+    text-align: center;
+    padding: 2rem;
+    color: var(--dim);
+    font-size: 0.85rem;
+    margin-top: 2rem;
+}

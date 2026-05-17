@@ -39,7 +39,7 @@
                         <div class="ring-outer"></div>
                         <div class="ring-mid"></div>
                         <div class="photo-frame">
-                            <div class="photo-initial">RJ</div>
+                            <img src="<%= request.getContextPath() %>/images/default.jpg" alt="Rojan">
                         </div>
                     </div>
 

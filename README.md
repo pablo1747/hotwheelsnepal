@@ -29,3 +29,22 @@ An e-commerce web application for buying and selling Hot Wheels die-cast car mod
 - Sanjeev Ghimire
 - Pratik Karki
 - Aryan
+
+## Project Structure
+```
+src/
+├── main/
+│   ├── java/com/hotwheelsnepal/
+│   │   ├── controller/   # Servlet controllers
+│   │   ├── dao/          # Data access layer
+│   │   ├── model/        # Entity classes
+│   │   ├── service/      # Business logic
+│   │   ├── filter/       # Auth filters
+│   │   └── util/         # Helper utilities
+│   └── webapp/
+│       ├── WEB-INF/pages/ # JSP views
+│       ├── css/           # Stylesheets
+│       ├── images/        # Static assets
+│       └── script/        # JavaScript
+└── hotwheelsnepal.sql     # Database schema
+```

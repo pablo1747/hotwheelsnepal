@@ -221,3 +221,5 @@ footer { background: #111; border-top: 1px solid #2a0000; text-align: center; pa
 .alert { padding: 10px 14px; border-radius: 6px; margin-bottom: 1rem; font-size: 0.87rem; }
 .alert-success { background: #002200; border: 1px solid #33aa33; color: #88ee88; }
 .alert-error   { background: #220000; border: 1px solid #aa3333; color: #ee8888; }
+/* Responsive sidebar for tablet screens */
+@media (max-width: 768px) { .admin-sidebar { width: 100%; position: relative; } }

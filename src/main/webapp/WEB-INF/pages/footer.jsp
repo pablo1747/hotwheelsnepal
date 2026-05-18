@@ -65,3 +65,5 @@ footer {
 .footer-links a:hover { color: #fff; background: rgba(232,0,26,0.12); }
 .footer-copy { color: #333; font-size: 0.78rem; }
 </style>
+
+<%-- Footer: copyright year is rendered dynamically --%>

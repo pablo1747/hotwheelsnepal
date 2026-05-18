@@ -35,12 +35,8 @@
                 <!-- LEFT -->
                 <div class="portfolio-left">
 
-                    <div class="photo-rings">
-                        <div class="ring-outer"></div>
-                        <div class="ring-mid"></div>
-                        <div class="photo-frame">
-                            <img src="<%= request.getContextPath() %>/images/pratik.jpg" alt="Pratik Karki">
-                        </div>
+                    <div class="photo-frame">
+                        <img src="<%= request.getContextPath() %>/images/pratik.jpg" alt="Pratik Karki">
                     </div>
 
                     <div class="status-badge">

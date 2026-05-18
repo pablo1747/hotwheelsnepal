@@ -36,12 +36,8 @@
                 <!-- LEFT: Photo + info card -->
                 <div class="portfolio-left">
 
-                    <div class="photo-rings">
-                        <div class="ring-outer"></div>
-                        <div class="ring-mid"></div>
-                        <div class="photo-frame">
-                            <img src="<%= request.getContextPath() %>/images/sanjeev.jpg" alt="Sanjeev Ghimire">
-                        </div>
+                    <div class="photo-frame">
+                        <img src="<%= request.getContextPath() %>/images/sanjeev.jpg" alt="Sanjeev Ghimire">
                     </div>
 
                     <div class="status-badge">

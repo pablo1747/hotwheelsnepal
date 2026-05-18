@@ -337,3 +337,5 @@ header nav a.nav-cta:hover { background: #ff2233; }
     }
 })();
 </script>
+
+<%-- Header nav: active class is applied based on current request URI --%>

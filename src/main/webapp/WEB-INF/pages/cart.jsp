@@ -146,3 +146,5 @@
 
 </body>
 </html>
+
+<%-- Empty cart notice: displayed when session cart contains no items --%>

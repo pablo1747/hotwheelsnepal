@@ -44,7 +44,10 @@ public class ProductDAO {
     public List<ProductModel> getAllProducts() throws Exception {
         List<ProductModel> products = new ArrayList<>();
         if (isConnectionError) return products;
-        String query = "SELECT * FROM products ORDER BY product_id DESC";
+        String query = "SELECT p.product_id, p.name, p.description, p.price, p.stock, "
+                     + "p.image_name, p.created_at, c.name AS series "
+                     + "FROM products p LEFT JOIN categories c ON p.category_id = c.category_id "
+                     + "ORDER BY p.product_id DESC";
         try (PreparedStatement stmt = dbConn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -63,7 +66,10 @@ public class ProductDAO {
      */
     public ProductModel getProductById(int productId) throws Exception {
         if (isConnectionError) return null;
-        String query = "SELECT * FROM products WHERE product_id = ?";
+        String query = "SELECT p.product_id, p.name, p.description, p.price, p.stock, "
+                     + "p.image_name, p.created_at, c.name AS series "
+                     + "FROM products p LEFT JOIN categories c ON p.category_id = c.category_id "
+                     + "WHERE p.product_id = ?";
         try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
             stmt.setInt(1, productId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -85,7 +91,10 @@ public class ProductDAO {
     public List<ProductModel> searchProducts(String keyword) throws Exception {
         List<ProductModel> products = new ArrayList<>();
         if (isConnectionError) return products;
-        String query = "SELECT * FROM products WHERE name LIKE ? OR series LIKE ? ORDER BY product_id DESC";
+        String query = "SELECT p.product_id, p.name, p.description, p.price, p.stock, "
+                     + "p.image_name, p.created_at, c.name AS series "
+                     + "FROM products p LEFT JOIN categories c ON p.category_id = c.category_id "
+                     + "WHERE p.name LIKE ? OR c.name LIKE ? ORDER BY p.product_id DESC";
         try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
             String pattern = "%" + keyword + "%";
             stmt.setString(1, pattern);
@@ -108,7 +117,8 @@ public class ProductDAO {
      */
     public boolean insertProduct(ProductModel product) throws Exception {
         if (isConnectionError) return false;
-        String query = "INSERT INTO products (name, description, price, stock, image_name, series) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO products (name, description, price, stock, image_name, category_id) "
+                     + "VALUES (?, ?, ?, ?, ?, (SELECT category_id FROM categories WHERE name = ?))";
         try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
             stmt.setString(1, product.getName());
             stmt.setString(2, product.getDescription());
@@ -129,8 +139,9 @@ public class ProductDAO {
      */
     public boolean updateProduct(ProductModel product) throws Exception {
         if (isConnectionError) return false;
-        String query = "UPDATE products SET name=?, description=?, price=?, stock=?, series=?, "
-                     + "image_name = COALESCE(?, image_name) WHERE product_id=?";
+        String query = "UPDATE products SET name=?, description=?, price=?, stock=?, "
+                     + "category_id=(SELECT category_id FROM categories WHERE name=?), "
+                     + "image_name=COALESCE(?, image_name) WHERE product_id=?";
         try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
             stmt.setString(1, product.getName());
             stmt.setString(2, product.getDescription());

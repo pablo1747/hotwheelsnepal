@@ -57,7 +57,12 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
-        String paymentMethod = request.getParameter("paymentMethod");
+        String paymentMethod   = request.getParameter("paymentMethod");
+        String deliveryName    = request.getParameter("deliveryName");
+        String deliveryPhone   = request.getParameter("deliveryPhone");
+        String deliveryAddress = request.getParameter("deliveryAddress");
+        String deliveryCity    = request.getParameter("deliveryCity");
+        String postalCode      = request.getParameter("postalCode");
 
         @SuppressWarnings("unchecked")
         List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
@@ -98,10 +103,18 @@ public class CheckoutServlet extends HttpServlet {
             }
         }
 
-        // Persist order to database
+        // Persist order, line items and payment record to database
         UserModel loggedUser = (UserModel) session.getAttribute(Constants.SESSION_LOGGED_USER);
         if (loggedUser != null) {
-            new OrderDAO().saveOrder(loggedUser.getUserId(), orderRef, grandTotal, paymentMethod);
+            OrderDAO orderDAO = new OrderDAO();
+            int orderId = orderDAO.saveOrder(
+                    loggedUser.getUserId(), orderRef,
+                    subtotal, shipping, vat, grandTotal, paymentMethod,
+                    deliveryName, deliveryPhone, deliveryAddress, deliveryCity, postalCode);
+            if (orderId > 0) {
+                if (cartItems != null) orderDAO.saveOrderItems(orderId, cartItems);
+                orderDAO.savePayment(orderId, paymentMethod, grandTotal);
+            }
         }
 
         // Clear the cart

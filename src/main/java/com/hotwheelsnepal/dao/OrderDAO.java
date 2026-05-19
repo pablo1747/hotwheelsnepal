@@ -1,10 +1,13 @@
 package com.hotwheelsnepal.dao;
 
+import com.hotwheelsnepal.model.CartItem;
 import com.hotwheelsnepal.util.DbConfig;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,45 +21,100 @@ public class OrderDAO {
     public OrderDAO() {
         try {
             dbConn = DbConfig.getDbConnection();
-            ensureTableExists();
         } catch (SQLException | ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             isConnectionError = true;
         }
     }
 
-    /** Creates the orders table if it does not exist yet. */
-    private void ensureTableExists() throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS orders ("
-                   + "order_id       INT AUTO_INCREMENT PRIMARY KEY, "
-                   + "user_id        INT NOT NULL, "
-                   + "order_ref      VARCHAR(20) NOT NULL, "
-                   + "grand_total    DECIMAL(10,2) NOT NULL, "
-                   + "payment_method VARCHAR(50), "
-                   + "created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-                   + ")";
-        try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+    /**
+     * Inserts a completed order row and returns the generated order_id.
+     *
+     * @return the new order_id, or -1 on failure
+     */
+    public int saveOrder(int userId, String orderRef, double subtotal, double shipping,
+                         double vat, double grandTotal, String paymentMethod,
+                         String deliveryName, String deliveryPhone,
+                         String deliveryAddress, String deliveryCity, String postalCode) {
+        if (isConnectionError) return -1;
+        String sql = "INSERT INTO orders "
+                   + "(user_id, order_ref, subtotal, shipping, vat, grand_total, payment_method, "
+                   + " delivery_name, delivery_phone, delivery_address, delivery_city, postal_code) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = dbConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1,    userId);
+            stmt.setString(2, orderRef);
+            stmt.setDouble(3, subtotal);
+            stmt.setDouble(4, shipping);
+            stmt.setDouble(5, vat);
+            stmt.setDouble(6, grandTotal);
+            stmt.setString(7, paymentMethod);
+            stmt.setString(8, deliveryName);
+            stmt.setString(9, deliveryPhone);
+            stmt.setString(10, deliveryAddress);
+            stmt.setString(11, deliveryCity);
+            stmt.setString(12, postalCode);
             stmt.executeUpdate();
+            try (ResultSet keys = stmt.getGeneratedKeys()) {
+                if (keys.next()) return keys.getInt(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+        return -1;
+    }
+
+    /**
+     * Inserts one order_items row for each CartItem in the list.
+     *
+     * @return true if all rows were inserted successfully
+     */
+    public boolean saveOrderItems(int orderId, List<CartItem> items) {
+        if (isConnectionError || items == null || items.isEmpty()) return false;
+        String sql = "INSERT INTO order_items "
+                   + "(order_id, product_id, product_name, unit_price, quantity, subtotal) "
+                   + "VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
+            for (CartItem item : items) {
+                Integer productId = null;
+                try { productId = Integer.parseInt(item.getId()); } catch (NumberFormatException ignored) {}
+                stmt.setInt(1, orderId);
+                if (productId != null) stmt.setInt(2, productId);
+                else                   stmt.setNull(2, java.sql.Types.INTEGER);
+                stmt.setString(3, item.getName());
+                stmt.setDouble(4, item.getPrice());
+                stmt.setInt(5,    item.getQuantity());
+                stmt.setDouble(6, item.getSubtotal());
+                stmt.addBatch();
+            }
+            int[] results = stmt.executeBatch();
+            for (int r : results) {
+                if (r == Statement.EXECUTE_FAILED) return false;
+            }
+            return true;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return false;
         }
     }
 
     /**
-     * Inserts a completed order record.
+     * Creates a pending payment record for the given order.
+     * For Cash on Delivery the status stays 'pending'; for
+     * digital methods it would be updated once the gateway confirms.
      *
-     * @param userId        the buyer's user ID
-     * @param orderRef      generated order reference (e.g. HWN-A1B2C3D4)
-     * @param grandTotal    final amount charged
-     * @param paymentMethod selected payment method string
      * @return true if the row was inserted
      */
-    public boolean saveOrder(int userId, String orderRef, double grandTotal, String paymentMethod) {
+    public boolean savePayment(int orderId, String paymentMethod, double amount) {
         if (isConnectionError) return false;
-        String sql = "INSERT INTO orders (user_id, order_ref, grand_total, payment_method) VALUES (?, ?, ?, ?)";
+        String status = "Cash on Delivery".equals(paymentMethod) ? "pending" : "pending";
+        String sql = "INSERT INTO payments (order_id, payment_method, payment_status, amount) "
+                   + "VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = dbConn.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
-            stmt.setString(2, orderRef);
-            stmt.setDouble(3, grandTotal);
-            stmt.setString(4, paymentMethod);
+            stmt.setInt(1,    orderId);
+            stmt.setString(2, paymentMethod);
+            stmt.setString(3, status);
+            stmt.setDouble(4, amount);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -65,10 +123,7 @@ public class OrderDAO {
     }
 
     /**
-     * Returns the number of completed orders for a given user.
-     *
-     * @param userId the buyer's user ID
-     * @return order count, 0 on error
+     * Returns the number of orders placed by a given user.
      */
     public int getOrderCountByUser(int userId) {
         if (isConnectionError) return 0;

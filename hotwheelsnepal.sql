@@ -26,12 +26,14 @@ CREATE TABLE IF NOT EXISTS users (
     password     VARCHAR(255) NOT NULL,
     image_path   VARCHAR(255) DEFAULT NULL,
     role         VARCHAR(10)  NOT NULL DEFAULT 'user',
+    status       VARCHAR(10)  NOT NULL DEFAULT 'inactive',
     created_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (user_id),
     UNIQUE KEY uq_username (username),
     UNIQUE KEY uq_email    (email),
-    CONSTRAINT chk_users_role CHECK (role IN ('admin', 'user'))
+    CONSTRAINT chk_users_role   CHECK (role   IN ('admin', 'user')),
+    CONSTRAINT chk_users_status CHECK (status IN ('active', 'inactive'))
 ) ENGINE=InnoDB;
 
 -- ============================================================
@@ -314,11 +316,11 @@ INSERT INTO coupons (code, discount_type, discount_value, min_order_amt, max_use
 ('FLAT50',    'fixed',      50.00, 1000.00, 50,  '2026-06-30 23:59:59');
 
 -- Default admin account   (password: Admin@1234)
-INSERT INTO users (first_name, last_name, username, dob, gender, email, phone_number, password, role)
+INSERT INTO users (first_name, last_name, username, dob, gender, email, phone_number, password, role, status)
 VALUES ('Admin', 'HotWheelsNepal', 'admin', '1990-01-01', 'Other',
         'admin@hotwheelsnepal.com', '9800000000',
         '$2a$12$7QH6q1V1g0VEVThVV0cN8.H3jz0zLy7PJnbHXb2KHjVfG4EXL3lNG',
-        'admin');
+        'admin', 'active');
 
 -- Sample Hot Wheels products
 INSERT INTO products (name, description, price, stock, image_name, category_id) VALUES

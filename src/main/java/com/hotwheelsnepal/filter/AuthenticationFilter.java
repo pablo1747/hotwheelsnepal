@@ -36,6 +36,7 @@ public class AuthenticationFilter implements Filter {
     private static final String ADD_PRODUCT      = "/AddProduct";
     private static final String EDIT_PRODUCT     = "/EditProduct";
     private static final String DELETE_PRODUCT   = "/DeleteProduct";
+    private static final String DOWNLOAD_REPORT  = "/DownloadReport";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}
@@ -88,6 +89,7 @@ public class AuthenticationFilter implements Filter {
                 || path.equalsIgnoreCase(ADD_PRODUCT)
                 || path.equalsIgnoreCase(EDIT_PRODUCT)
                 || path.equalsIgnoreCase(DELETE_PRODUCT)
+                || path.equalsIgnoreCase(DOWNLOAD_REPORT)
                 || path.startsWith("/admin");
 
         // Redirect already logged in users away from login/register

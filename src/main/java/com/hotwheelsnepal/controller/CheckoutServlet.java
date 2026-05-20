@@ -1,5 +1,6 @@
 package com.hotwheelsnepal.controller;
 
+import com.hotwheelsnepal.dao.CouponDAO;
 import com.hotwheelsnepal.dao.OrderDAO;
 import com.hotwheelsnepal.model.CartItem;
 import com.hotwheelsnepal.model.UserModel;
@@ -63,6 +64,7 @@ public class CheckoutServlet extends HttpServlet {
         String deliveryAddress = request.getParameter("deliveryAddress");
         String deliveryCity    = request.getParameter("deliveryCity");
         String postalCode      = request.getParameter("postalCode");
+        String couponCode      = request.getParameter("couponCode");
 
         @SuppressWarnings("unchecked")
         List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
@@ -70,25 +72,39 @@ public class CheckoutServlet extends HttpServlet {
         // Compute order total
         double subtotal = 0;
         if (cartItems != null) {
-            for (CartItem item : cartItems) {
-                subtotal += item.getSubtotal();
+            for (CartItem item : cartItems) subtotal += item.getSubtotal();
+        }
+        double shipping = subtotal >= 1000 ? 0 : 100;
+        double vat      = subtotal * 13.0 / 100.0;
+
+        // Validate promo code server-side (never trust client-only discount)
+        double  discountAmount = 0;
+        Integer couponId       = null;
+        if (couponCode != null && !couponCode.trim().isEmpty()) {
+            CouponDAO couponDAO = new CouponDAO();
+            String[]  coupon    = couponDAO.validateCoupon(couponCode, subtotal);
+            if (coupon != null) {
+                discountAmount = CouponDAO.computeDiscount(coupon, subtotal);
+                couponId       = Integer.parseInt(coupon[0]);
+                couponDAO.incrementCouponUse(couponId);
             }
         }
-        double shipping   = subtotal >= 1000 ? 0 : 100;
-        double vat        = subtotal * 13.0 / 100.0;
-        double grandTotal = subtotal + shipping + vat;
+
+        double grandTotal = subtotal - discountAmount + shipping + vat;
 
         // Generate a simple order reference
         String orderRef = "HWN-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
         // Expose order details to the thank-you page
-        request.setAttribute("orderRef",       orderRef);
-        request.setAttribute("paymentMethod",  paymentMethod);
-        request.setAttribute("cartItems",      cartItems);
-        request.setAttribute("subtotal",       subtotal);
-        request.setAttribute("shipping",       shipping);
-        request.setAttribute("vat",            vat);
-        request.setAttribute("grandTotal",     grandTotal);
+        request.setAttribute("orderRef",        orderRef);
+        request.setAttribute("paymentMethod",   paymentMethod);
+        request.setAttribute("cartItems",       cartItems);
+        request.setAttribute("subtotal",        subtotal);
+        request.setAttribute("discountAmount",  discountAmount);
+        request.setAttribute("couponCode",      couponCode);
+        request.setAttribute("shipping",        shipping);
+        request.setAttribute("vat",             vat);
+        request.setAttribute("grandTotal",      grandTotal);
 
         // Reduce stock for each purchased item (only for real DB product IDs)
         ProductService productService = new ProductService();
@@ -109,7 +125,8 @@ public class CheckoutServlet extends HttpServlet {
             OrderDAO orderDAO = new OrderDAO();
             int orderId = orderDAO.saveOrder(
                     loggedUser.getUserId(), orderRef,
-                    subtotal, shipping, vat, grandTotal, paymentMethod,
+                    subtotal, discountAmount, shipping, vat, grandTotal, paymentMethod,
+                    couponId,
                     deliveryName, deliveryPhone, deliveryAddress, deliveryCity, postalCode);
             if (orderId > 0) {
                 if (cartItems != null) orderDAO.saveOrderItems(orderId, cartItems);

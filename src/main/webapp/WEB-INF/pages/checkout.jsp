@@ -69,10 +69,27 @@
                 </div>
             </div>
 
+            <%-- Promo Code --%>
+            <div class="checkout-card">
+                <h3 class="card-title">
+                    <span class="step-num">2</span> Promo Code <span style="font-size:0.75rem;font-weight:normal;color:#888;">(optional)</span>
+                </h3>
+                <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;">
+                    <input type="text" id="promoInput" placeholder="Enter promo code (e.g. WELCOME10)"
+                           style="flex:1;min-width:180px;padding:0.6rem 0.9rem;border:1px solid #ddd;border-radius:6px;font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;">
+                    <button type="button" id="applyPromoBtn"
+                            style="background:#b30000;color:#fff;border:none;padding:0.6rem 1.2rem;border-radius:6px;font-size:0.88rem;font-weight:bold;cursor:pointer;white-space:nowrap;">
+                        Apply
+                    </button>
+                </div>
+                <div id="promoMsg" style="margin-top:8px;font-size:0.83rem;display:none;"></div>
+                <input type="hidden" name="couponCode" id="couponCode" value="">
+            </div>
+
             <%-- Payment Method --%>
             <div class="checkout-card">
                 <h3 class="card-title">
-                    <span class="step-num">2</span> Payment Method
+                    <span class="step-num">3</span> Payment Method
                 </h3>
                 <div class="payment-options">
 
@@ -159,6 +176,10 @@
                         <span>Subtotal</span>
                         <span>Rs. <c:out value="${subtotal}"/></span>
                     </div>
+                    <div class="summary-row" id="discountRow" style="display:none;color:#c62828;font-weight:bold;">
+                        <span>Promo Discount</span>
+                        <span id="discountDisplay">- Rs. 0</span>
+                    </div>
                     <div class="summary-row">
                         <span>Shipping</span>
                         <span>
@@ -178,7 +199,7 @@
 
                 <div class="summary-total">
                     <span>Total</span>
-                    <span class="total-amount">Rs. <c:out value="${grandTotal}"/></span>
+                    <span class="total-amount" id="grandTotalDisplay">Rs. <c:out value="${grandTotal}"/></span>
                 </div>
 
                 <button type="submit" class="btn-confirm">Confirm &amp; Pay &rarr;</button>
@@ -197,6 +218,7 @@
 
 <script>
 (function () {
+    // Payment option highlight
     var options = document.querySelectorAll('.payment-option');
     options.forEach(function (label) {
         var radio = label.querySelector('input[type="radio"]');
@@ -206,6 +228,51 @@
             label.classList.add('selected');
         });
     });
+
+    // Promo code
+    var subtotal     = ${subtotal};
+    var shipping     = ${shipping};
+    var vat          = ${vat};
+    var baseTotal    = subtotal + shipping + vat;
+    var appliedDiscount = 0;
+
+    document.getElementById('applyPromoBtn').addEventListener('click', function () {
+        var code = document.getElementById('promoInput').value.trim();
+        var msgEl = document.getElementById('promoMsg');
+        if (!code) {
+            showMsg(msgEl, 'Please enter a promo code.', false);
+            return;
+        }
+        fetch('<%= request.getContextPath() %>/ApplyCoupon?code=' + encodeURIComponent(code) + '&subtotal=' + subtotal)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.valid) {
+                    appliedDiscount = data.discountAmount;
+                    document.getElementById('couponCode').value = code;
+                    document.getElementById('discountRow').style.display = '';
+                    document.getElementById('discountDisplay').textContent = '- Rs. ' + Math.round(appliedDiscount);
+                    document.getElementById('grandTotalDisplay').textContent =
+                        'Rs. ' + Math.round(baseTotal - appliedDiscount);
+                    showMsg(msgEl, data.message, true);
+                    document.getElementById('applyPromoBtn').textContent = 'Applied ✓';
+                    document.getElementById('applyPromoBtn').style.background = '#2e7d32';
+                    document.getElementById('promoInput').readOnly = true;
+                } else {
+                    appliedDiscount = 0;
+                    document.getElementById('couponCode').value = '';
+                    document.getElementById('discountRow').style.display = 'none';
+                    document.getElementById('grandTotalDisplay').textContent = 'Rs. ' + Math.round(baseTotal);
+                    showMsg(msgEl, data.message, false);
+                }
+            })
+            .catch(function () { showMsg(msgEl, 'Could not apply code. Try again.', false); });
+    });
+
+    function showMsg(el, text, success) {
+        el.textContent = text;
+        el.style.color = success ? '#2e7d32' : '#c62828';
+        el.style.display = '';
+    }
 })();
 </script>
 </body>

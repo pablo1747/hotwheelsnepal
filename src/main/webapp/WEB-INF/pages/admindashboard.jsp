@@ -180,6 +180,7 @@
                 <a href="${pageContext.request.contextPath}/AddProduct" class="action-btn">+ Add New Product</a>
                 <a href="${pageContext.request.contextPath}/AdminProducts" class="action-btn secondary">Manage Products</a>
                 <a href="${pageContext.request.contextPath}/AdminUsers" class="action-btn secondary">Manage Users</a>
+                <a href="${pageContext.request.contextPath}/DownloadReport" class="action-btn" style="background:#1a6b1a;border:none;" title="Download this month's sales report as an HTML file">&#8595; Download Monthly Report</a>
             </div>
         </div>
 

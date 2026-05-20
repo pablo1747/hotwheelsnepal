@@ -63,7 +63,7 @@
         <div class="contact-info">
             <div class="info-card">
                 <div class="label">Email</div>
-                <div class="value">hotwheels\@gmail.com</div>
+                <div class="value">hwnepal@gmail.com</div>
             </div>
             <div class="info-card">
                 <div class="label">Phone</div>
